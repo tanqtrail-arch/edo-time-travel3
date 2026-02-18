@@ -14,6 +14,31 @@
 </head>
 <body>
   <div id="root"></div>
+  <script>
+// ─── TRAIL ALT・ランキング連携 ───────────────────────────
+const GAS_URL     = 'https://script.google.com/macros/s/AKfycbzKUyiUHIMp9JRFX0LEa88plEoavkbrjTQ5oHf9T-FDd6b4fhqfTCBVBy5rWUZPUQbY/exec';
+const GAME_ID     = 14;
+const GAME_NAME   = '江戸時代迷路クイズ';
+const SCORE_LABEL = '点';
+const ALT_AMOUNT  = 10;
+const TRAIL_PLAYER = new URLSearchParams(location.search).get('player') || null;
+
+async function sendResult(score) {
+  if (!TRAIL_PLAYER) return;
+  const opt = { method:'POST', redirect:'follow', headers:{'Content-Type':'text/plain'} };
+  await fetch(GAS_URL, { ...opt, body: JSON.stringify({
+    action: 'saveRanking',
+    gameId: GAME_ID, gameName: GAME_NAME,
+    player: TRAIL_PLAYER, score: score, scoreLabel: SCORE_LABEL
+  })});
+  await fetch(GAS_URL, { ...opt, body: JSON.stringify({
+    action: 'addCoin',
+    player: TRAIL_PLAYER, gameId: GAME_ID,
+    gameName: GAME_NAME, amount: ALT_AMOUNT
+  })});
+}
+// ─────────────────────────────────────────────────────────
+  </script>
   <script src="./bundle.js"></script>
 </body>
 </html>
